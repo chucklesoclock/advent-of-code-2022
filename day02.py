@@ -18,27 +18,28 @@ class MatchResult(IntEnum):
     win = 6
 
 
-throw_code = dict(
-    A="rock",
-    B="paper",
-    C="scissors",
-    X="rock",
-    Y="paper",
-    Z="scissors",
+throw_map = dict(
+    A=Throw.rock,
+    B=Throw.paper,
+    C=Throw.scissors,
+    X=Throw.rock,
+    Y=Throw.rock,
+    Z=Throw.scissors,
 )
+
+win_map = dict(X=MatchResult.loss, Y=MatchResult.draw, Z=MatchResult.win)
 
 
 def parse_input(
     part: Literal[1, 2], sample: bool = False
 ) -> list[tuple[Throw, Throw | MatchResult]]:
     data_path = INPUT_DIR / f"{'data' if not sample else 'sample'}02"
-    parse_code_to_throw = lambda x: Throw[throw_code[x]]
+    parse_code_to_throw = throw_map.__getitem__
     match part:
         case 1:
             second_col_prase = parse_code_to_throw
         case 2:
-            win_code = dict(X=MatchResult.loss, Y=MatchResult.draw, Z=MatchResult.win)
-            second_col_prase = win_code.__getitem__
+            second_col_prase = win_map.__getitem__
         case _:
             raise ValueError(f"param part must be in [1, 2]: {part=}")
     with data_path.open() as f:
