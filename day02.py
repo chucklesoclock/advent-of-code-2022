@@ -1,6 +1,6 @@
 from enum import IntEnum
 from utils import INPUT_DIR
-from typing import Literal
+from typing import Literal, Generator
 import functools
 from timethis import timethis
 import pytest
@@ -32,7 +32,7 @@ win_map = dict(X=MatchResult.loss, Y=MatchResult.draw, Z=MatchResult.win)
 
 def parse_input(
     part: Literal[1, 2], sample: bool = False
-) -> list[tuple[Throw, Throw | MatchResult]]:
+) -> Generator[tuple[Throw, Throw | MatchResult], None, None]:
     data_path = INPUT_DIR / f"{'data' if not sample else 'sample'}02"
     parse_code_to_throw = throw_map.__getitem__
     match part:
@@ -42,11 +42,10 @@ def parse_input(
             second_col_prase = win_map.__getitem__
         case _:
             raise ValueError(f"param part must be in [1, 2]: {part=}")
-    with data_path.open() as f:
-        return [
-            (parse_code_to_throw(x), second_col_prase(y))
-            for x, y in (line.split() for line in f)
-        ]
+    return (
+        (parse_code_to_throw(x), second_col_prase(y))
+        for x, y in (line.split() for line in data_path.read_text().splitlines())
+    )
 
 
 @functools.cache
@@ -93,11 +92,16 @@ def part2(guide: list[tuple[Throw, MatchResult]]) -> int:
     return sum(line[1] + determine_throw(line) for line in guide)
 
 
-if __name__ == "__main__":
+@timethis
+def main():
     guide = parse_input(part=1)
     print(part1(guide))
     guide = parse_input(part=2)
     print(part2(guide))
+
+
+if __name__ == "__main__":
+    main()
 
 
 @pytest.fixture
