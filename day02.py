@@ -23,7 +23,7 @@ throw_map = dict(
     B=Throw.paper,
     C=Throw.scissors,
     X=Throw.rock,
-    Y=Throw.rock,
+    Y=Throw.paper,
     Z=Throw.scissors,
 )
 
