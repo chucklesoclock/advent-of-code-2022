@@ -40,8 +40,7 @@ def grouper(iterable, n, *, incomplete="fill", fillvalue=None):
 def part2(data):
     priority_sum = 0
     for elf_group in data:
-        ruck1, ruck2, ruck3 = map(set, elf_group)
-        common_items = ruck1 & ruck2 & ruck3
+        common_items = functools.reduce(set.intersection, map(set, elf_group))
         priority_sum += sum(priority(item) for item in common_items)
     return priority_sum
 
